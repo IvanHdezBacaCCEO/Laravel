@@ -12,6 +12,20 @@ use App\Http\Requests\StorePostPost;
 class PostController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // $this->middleware('auth');
+        // $this->middleware('rol.admin');
+        $this->middleware(['auth','rol.admin']);
+        //$this->middleware('auth')->only('index');
+        //$this->middleware('auth')->except('index','show');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
