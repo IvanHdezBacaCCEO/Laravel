@@ -21,13 +21,13 @@ class PostController extends ApiResponseController
         $posts = Post::
         join('post_images','post_images.post_id','=','posts.id')->
         join('categories','categories.id','=','posts.category_id')->
-        select('posts.title','posts.id','categories.title as category', 'post_images.image')->
+        select('posts.title','posts.id','categories.title as category','posts.content', 'post_images.image')->
         orderBy('posts.created_at','desc')->paginate(10);
         // return response()->json([
         //     'title'=>'Hola mundo Laravel',
         //     'content'=>'Contenido'
         // ]);
-        return $this->successResponse($posts, 500);
+        return $this->successResponse($posts, 200);
     }
 
     /**
@@ -66,8 +66,16 @@ class PostController extends ApiResponseController
 
     public function category(Category $category)
     {
-        return $this->successResponse(["posts"=>$category->post()->paginate(10),
-            "category"=>$category]);
+
+        $posts = Post::
+            join('post_images','post_images.post_id','=','posts.id')->
+            join('categories','categories.id','=','posts.category_id')->
+            select('posts.title','posts.id','categories.title as category','posts.content', 'post_images.image')->
+            orderBy('posts.created_at','desc')->
+            where('categories.id', $category->id)->paginate(10);
+            return $this->successResponse(["posts"=>$posts,"category"=>$category]);
+        // return $this->successResponse(["posts"=>$category->post()->paginate(10),
+        //     "category"=>$category]);
         //return response()->json(array('data'=>$post,'code'=>200,'msj'=>''), 200);
     }
 

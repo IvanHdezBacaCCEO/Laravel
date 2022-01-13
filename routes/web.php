@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\PostController;
 use App\Http\Controllers\dashboard\UserController;
 use App\Http\Controllers\dashboard\CategoryController;
+use App\Http\Controllers\web\WebController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +16,6 @@ use App\Http\Controllers\dashboard\CategoryController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
 
 // Route::get('/acerca-de', function () {
 //     return "Hello world";
@@ -50,6 +47,13 @@ Route::resource('dashboard/post', PostController::class);
 Route::post('dashboard/post/{post}/image', 'App\Http\Controllers\dashboard\PostController@image')->name('post.image');
 Route::resource('dashboard/category', CategoryController::class);
 Route::resource('dashboard/user', UserController::class);
+
+Route::get('/', 'App\Http\Controllers\web\WebController@index')->name('index');
+Route::get('/categories', 'App\Http\Controllers\web\WebController@index')->name('index');
+
+Route::get('/detail/{id}', 'App\Http\Controllers\web\WebController@detail');
+Route::get('/post-category/{id}', 'App\Http\Controllers\web\WebController@post_category');
+Route::get('/contact', 'App\Http\Controllers\web\WebController@contact');
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
