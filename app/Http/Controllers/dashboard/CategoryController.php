@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Models\Category;
+use App\Helpers\CustomUrl;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryPost;
+use App\Http\Requests\UpdateCategoryPut;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -18,9 +21,9 @@ class CategoryController extends Controller
     {
         // $this->middleware('auth');
         // $this->middleware('rol.admin');
-        $this->middleware(['auth','rol.admin']);
+        $this->middleware(['auth', 'rol.admin']);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -28,8 +31,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('created_at','desc')->paginate(10);
-        return view('dashboard.category.index',['categories'=>$categories]);
+        $categories = Category::orderBy('created_at', 'desc')->paginate(10);
+        return view('dashboard.category.index', ['categories' => $categories]);
     }
 
     /**
@@ -39,7 +42,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view("dashboard.category.create",['category'=> new Category]);
+        return view("dashboard.category.create", ['category' => new Category]);
     }
 
     /**
@@ -50,7 +53,24 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryPost $request)
     {
-        Category::create($request->validated());
+        if ($request->url_clean == "") {
+            $urlClean_temp = $request->title;
+        } else {
+            $urlClean_temp = $request->url_clean;
+        }
+        $urlClean = CustomUrl::urlTitle(CustomUrl::convertAccentedCharacters($urlClean_temp), '-', true);
+        echo "Hola mundo: " . $urlClean . "<br>";
+
+        $requestData = $request->validated();
+        $requestData['url_clean'] = $urlClean;
+
+        $validator = Validator::make($requestData, StoreCategoryPost::myRules());
+        if ($validator->fails()) {
+            return redirect('dashboard/category/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+        Category::create($requestData);
         return back()->with('status', 'Categoria creada con exito');
     }
 
@@ -62,7 +82,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return view('dashboard.category.show', ["category"=>$category]);
+        return view('dashboard.category.show', ["category" => $category]);
     }
 
     /**
@@ -83,7 +103,7 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreCategoryPost $request, Category $category)
+    public function update(UpdateCategoryPut $request, Category $category)
     {
         $category->update($request->validated());
         return back()->with('status', 'Categoria actualizada con exito');

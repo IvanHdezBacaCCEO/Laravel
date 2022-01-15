@@ -7,8 +7,24 @@
 require('./bootstrap');
 
 import router from './assets/router.js';
+const ClassicEditor = require("@ckeditor/ckeditor5-build-classic");
+const MyUploadAdapter = require('./assets/ckeditor/MyUploadAdapter.js')
 
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+function MyCustomUploadAdapterPlugin( editor ) {
+    editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+        // Configure the URL to the upload script in your back-end here!
+        return new MyUploadAdapter( loader );
+    };
+}
+
+
+ClassicEditor
+        .create( document.querySelector( '#content' ), {
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+        })
+        .catch( error => {
+            console.error( error );
+        } );
 
 /**
  * The following block of code may be used to automatically register your

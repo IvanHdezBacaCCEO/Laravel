@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\PostController;
 use App\Http\Controllers\dashboard\UserController;
 use App\Http\Controllers\dashboard\CategoryController;
+use App\Http\Controllers\dashboard\ContactController;
+use App\Http\Controllers\dashboard\PostCommentController;
 use App\Http\Controllers\web\WebController;
 
 /*
@@ -45,8 +47,19 @@ use App\Http\Controllers\web\WebController;
 //Route::get('post', [PostController::class, 'index']);
 Route::resource('dashboard/post', PostController::class);
 Route::post('dashboard/post/{post}/image', 'App\Http\Controllers\dashboard\PostController@image')->name('post.image');
+
+Route::post('dashboard/post/content_image', 'App\Http\Controllers\dashboard\PostController@contentImage');
+
 Route::resource('dashboard/category', CategoryController::class);
 Route::resource('dashboard/user', UserController::class);
+Route::resource('dashboard/contact', ContactController::class)->only([
+    'index','show','destroy'
+]);
+Route::resource('dashboard/post-comment', PostCommentController::class)->only([
+    'index','show','destroy'
+]);
+Route::get('dashboard/post-comment/{post}/post', 'App\Http\Controllers\dashboard\PostCommentController@post')->name('post-comment.post');
+Route::post('dashboard/post-comment/process/{postComment}', 'App\Http\Controllers\dashboard\PostCommentController@process');
 
 Route::get('/', 'App\Http\Controllers\web\WebController@index')->name('index');
 Route::get('/categories', 'App\Http\Controllers\web\WebController@index')->name('index');
