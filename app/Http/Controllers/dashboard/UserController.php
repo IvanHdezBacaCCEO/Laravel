@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserPost;
 use App\Http\Requests\UpdateUserPut;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -30,7 +29,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('created_at','desc')->paginate(10);
+        // dd(User::find(2)->tags()->sync([1,2,3,4]));
+        $users = User::with('rol')->orderBy('created_at','desc')->paginate(10);
         return view('dashboard.user.index',['users'=>$users]);
     }
 
@@ -56,7 +56,7 @@ class UserController extends Controller
             'name' => $request['name'],
             'surname' => $request['surname'],
             'email' => $request['email'],
-            'password' => Hash::make($request['password']),
+            'password' => $request['password'],
             'rol_id' => 1 //Rol de admin
         ]);
         return back()->with('status', 'Usuario creado con exito');

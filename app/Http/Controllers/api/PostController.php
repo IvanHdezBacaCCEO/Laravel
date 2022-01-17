@@ -50,6 +50,7 @@ class PostController extends ApiResponseController
     public function show(Post $post)
     {
         $post->image;
+        $post->images;
         $post->category;
         return $this->successResponse($post);
         //return response()->json(array('data'=>$post,'code'=>200,'msj'=>''), 200);
